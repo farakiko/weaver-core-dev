@@ -3,7 +3,7 @@
 
 ## Note: if it's a higgs then it has to be matched (note: fj_genRes_mass=125 for higgs else 0)
 selection: >-
-   (lep_dR_fj>0.03) &
+   (lep_dR_fj>0.03) & (lep_dR_fj<0.8) &
    ( (fj_genRes_mass==125) & (matched_mask) & ((fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1)) & (fj_lepinprongs==1) & (fj_nquarks==2) ) | (fj_genRes_mass!=125)
 
 ### selection to apply at test time (i.e., when running w/ --predict)
@@ -27,22 +27,23 @@ preprocess:
    ### data_fraction: fraction of events to use when calculating the mean/scale for the standardization
    data_fraction:
 
+# it clips from -5 to 5 by default [minus, multiplies, clip min, clip max]: +1 then take log()
 inputs:
    basic:
       length: null
       vars:
          - fj_pt
          - fj_msoftdrop
-         - fj_eta
-         - fj_phi
-         - met_relpt
-         - met_relphi
-         - lep_dR_fj
-         - n_bjets_L
-         - n_bjets_M
-         - n_bjets_T
-         - lep_reliso
-         - lep_miso
+         # - fj_eta
+         # - fj_phi
+         # - met_relpt
+         # - met_relphi
+         # - lep_dR_fj
+         # - n_bjets_L
+         # - n_bjets_M
+         # - n_bjets_T
+         # - lep_reliso
+         # - lep_miso
          # - rec_higgs_m
          # - rec_W_lnu_m
          # - rec_W_qq_m
@@ -206,6 +207,7 @@ observers:
    - rec_higgs_m
    - rec_W_lnu_m
    - rec_W_qq_m
+   - met_relpt
    - class_H
    - class_W
    - class_Top
