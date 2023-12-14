@@ -141,3 +141,5 @@ triton_models/
 experiments/
 prp/
 onnx.sh
+.DS_Store
+experiments_finetuning/

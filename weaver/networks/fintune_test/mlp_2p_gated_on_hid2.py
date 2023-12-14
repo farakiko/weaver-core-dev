@@ -31,7 +31,7 @@ class MultiLayerPerceptron2Path(nn.Module):
 
         if self.neurons_in_preprocess:
             preinput_dims += input_dims
-        prechannels = [preinput_dims] + list(prelayer_params) + [input_dims]
+        prechannels = [preinput_dims] + list(prelayer_params) + [num_classes]
         self.premlp = nn.Sequential(
             *[layer(in_dim, out_dim) for in_dim, out_dim in zip(prechannels[:-1], prechannels[1:])]
         )
@@ -43,19 +43,20 @@ class MultiLayerPerceptron2Path(nn.Module):
     def forward(self, xp, x):
         # x: the feature vector initally read from the data structure, in dimension (N, C) (no last dimension P as we set length = None)
         if self.neurons_in_preprocess:
+            sys.exit
             xp = torch.cat((xp, x), dim=1)
-        x_upd = x + self.premlp(xp)
 
-        # if self.for_inference:
-            # return torch.softmax(self.mlp(x_upd), dim=1)
+        hidneurons = self.mlp(x)
+        others = self.premlp(xp)
 
-        return self.mlp(x_upd)
+        return hidneurons + others
+    
 
 
 def get_model(data_config, **kwargs):
-    prelayer_params = (32, 32)
-    
+    prelayer_params = (128, 128)
     layer_params = ()
+
     preinput_dims = len(data_config.input_dicts['basic'])
     input_dims = len(data_config.input_dicts['highlevel'])
     num_classes = len(data_config.label_value)

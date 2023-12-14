@@ -7,6 +7,12 @@ def layer(in_dim, out_dim):
         # nn.BatchNorm1d(out_dim),
         nn.ReLU(),
     )
+def layer_norelu(in_dim, out_dim):
+    return nn.Sequential(
+        nn.Linear(in_dim, out_dim),
+        # nn.BatchNorm1d(out_dim),
+        # nn.ReLU(),
+    )    
 
 class MultiLayerPerceptron2Path(nn.Module):
     r"""Parameters
@@ -21,7 +27,7 @@ class MultiLayerPerceptron2Path(nn.Module):
 
     def __init__(self, preinput_dims, input_dims, num_classes,
                  prelayer_params=(256, 256), layer_params=(),
-                 for_inference=False,
+                 for_inference=False, relu=False,
                  **kwargs):
 
         self.for_inference = for_inference
@@ -29,32 +35,33 @@ class MultiLayerPerceptron2Path(nn.Module):
         self.neurons_in_preprocess = kwargs.pop('neurons_in_preprocess', False)
         super(MultiLayerPerceptron2Path, self).__init__(**kwargs)
 
-        if self.neurons_in_preprocess:
-            preinput_dims += input_dims
-        prechannels = [preinput_dims] + list(prelayer_params) + [input_dims]
-        self.premlp = nn.Sequential(
-            *[layer(in_dim, out_dim) for in_dim, out_dim in zip(prechannels[:-1], prechannels[1:])]
-        )
         channels = [input_dims] + list(layer_params) + [num_classes]
-        self.mlp = nn.Sequential(
-            *[layer(in_dim, out_dim) for in_dim, out_dim in zip(channels[:-1], channels[1:])]
-        )
+
+        if relu:
+            self.mlp = nn.Sequential(
+                *[layer(in_dim, out_dim) for in_dim, out_dim in zip(channels[:-1], channels[1:])]
+            )
+        else:
+            self.mlp = nn.Sequential(
+                *[layer_norelu(in_dim, out_dim) for in_dim, out_dim in zip(channels[:-1], channels[1:])]
+            )
 
     def forward(self, xp, x):
         # x: the feature vector initally read from the data structure, in dimension (N, C) (no last dimension P as we set length = None)
-        if self.neurons_in_preprocess:
-            xp = torch.cat((xp, x), dim=1)
-        x_upd = x + self.premlp(xp)
+        # if self.neurons_in_preprocess:
+        #     xp = torch.cat((xp, x), dim=1)
+        # x_upd = x + self.premlp(xp)
 
         # if self.for_inference:
             # return torch.softmax(self.mlp(x_upd), dim=1)
 
-        return self.mlp(x_upd)
+        # return self.mlp(x_upd)
+        return self.mlp(x)
 
 
 def get_model(data_config, **kwargs):
     prelayer_params = (32, 32)
-    
+
     layer_params = ()
     preinput_dims = len(data_config.input_dicts['basic'])
     input_dims = len(data_config.input_dicts['highlevel'])
