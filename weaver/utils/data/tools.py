@@ -132,25 +132,14 @@ def _eval_expr(expr, table):
                 '_p4_from_ptetaphie': _p4_from_ptetaphie, '_p4_from_ptetaphim': _p4_from_ptetaphim})
 
     if "np.stack" in expr:
-        # print(expr)
-        # # need to modify the expression to use numpy
-        # tmp = np.stack([table["class_H"],table["class_W"],table["class_Top"], table["class_QCD"]], axis=1)
-        # tmp = tmp.to_numpy()        
 
-        # if expr == "np.argmax(np.stack([class_H,class_W,class_Top,class_QCD], axis=1), axis=1)":
-        #     return np.argmax(tmp, axis=1)
-        # elif expr == "np.sum(np.stack([class_H,class_W,class_Top,class_QCD], axis=1), axis=1)":
-        #     return np.sum(tmp, axis=1)
-
-
-        print(expr)
         # need to modify the expression to use numpy
-        tmp = np.stack([table["class_H"],table["class_W"]], axis=1)
+        tmp = np.stack([table["class_H"],table["class_W"],table["class_Top"], table["class_QCD"]], axis=1)
         tmp = tmp.to_numpy()        
 
-        if expr == "np.argmax(np.stack([class_H,class_W], axis=1), axis=1)":
+        if expr == "np.argmax(np.stack([class_H,class_W,class_Top,class_QCD], axis=1), axis=1)":
             return np.argmax(tmp, axis=1)
-        elif expr == "np.sum(np.stack([class_H,class_W], axis=1), axis=1)":
+        elif expr == "np.sum(np.stack([class_H,class_W,class_Top,class_QCD], axis=1), axis=1)":
             return np.sum(tmp, axis=1)
 
 

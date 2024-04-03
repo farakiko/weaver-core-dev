@@ -130,7 +130,7 @@ parser.add_argument('--profile', action='store_true', default=False,
                     help='run the profiler')
 parser.add_argument('--backend', type=str, choices=['gloo', 'nccl', 'mpi'], default=None,
                     help='backend for distributed training')
-
+parser.add_argument('--relu', action='store_true', default=False)
 
 def to_filelist(args, mode='train'):
     if mode == 'train':
@@ -220,8 +220,8 @@ def train_load(args):
         args.data_fraction = 0.1
         args.fetch_step = 0.002
 
-    if args.in_memory and (args.steps_per_epoch is None or args.steps_per_epoch_val is None):
-        raise RuntimeError('Must set --steps-per-epoch when using --in-memory!')
+    # if args.in_memory and (args.steps_per_epoch is None or args.steps_per_epoch_val is None):
+    #     raise RuntimeError('Must set --steps-per-epoch when using --in-memory!')
 
     train_data = SimpleIterDataset(train_file_dict, args.data_config, for_training=True,
                                    load_range_and_fraction=(train_range, args.data_fraction),
@@ -239,12 +239,15 @@ def train_load(args):
                                  infinity_mode=args.steps_per_epoch_val is not None,
                                  in_memory=args.in_memory,
                                  name='val' + ('' if args.local_rank is None else '_rank%d' % args.local_rank))
+
     train_loader = DataLoader(train_data, batch_size=args.batch_size, drop_last=True, pin_memory=True,
                               num_workers=min(args.num_workers, int(len(train_files) * args.file_fraction)),
                               persistent_workers=args.num_workers > 0 and args.steps_per_epoch is not None)
+
     val_loader = DataLoader(val_data, batch_size=args.batch_size, drop_last=True, pin_memory=True,
                             num_workers=min(args.num_workers, int(len(val_files) * args.file_fraction)),
                             persistent_workers=args.num_workers > 0 and args.steps_per_epoch_val is not None)
+
     data_config = train_data.config
     train_input_names = train_data.config.input_names
     train_label_names = train_data.config.label_names
@@ -313,19 +316,22 @@ def onnx(args, model, data_config, model_info):
     :return:
     """
     assert (args.export_onnx.endswith('.onnx'))
-    model_path = args.model_prefix
+    model_path = args.model_prefix + '_best_epoch_state.pt'
     _logger.info('Exporting model %s to ONNX' % model_path)
     model.load_state_dict(torch.load(model_path, map_location='cpu'))
     model = model.cpu()
     model.eval()
-
+    
     os.makedirs(os.path.dirname(args.export_onnx), exist_ok=True)
     inputs = tuple(
         torch.ones(model_info['input_shapes'][k], dtype=torch.float32) for k in model_info['input_names'])
+
+
     torch.onnx.export(model, inputs, args.export_onnx,
                       input_names=model_info['input_names'],
                       output_names=model_info['output_names'],
-                      dynamic_axes=model_info.get('dynamic_axes', None),
+                    #   dynamic_axes=model_info.get('dynamic_axes'),
+                      dynamic_axes=model_info.get('dynamic_axes', None),   # ONLY FOR LOW LEVEL INPUTS (I.E. VARIABLE NUMBER OF PARTICLES)
                       opset_version=11)
     _logger.info('ONNX model saved to %s', args.export_onnx)
 
@@ -542,7 +548,9 @@ def model_setup(args, data_config):
     network_module = import_module(args.network_config, name='_network_module')
     network_options = {k: ast.literal_eval(v) for k, v in args.network_option}
     _logger.info('Network options: %s' % str(network_options))
-    if args.export_onnx:
+    if args.relu:
+        network_options['relu'] = args.relu    
+    if args.export_onnx:  
         network_options['for_inference'] = True
     if args.use_amp:
         network_options['use_amp'] = True
@@ -551,7 +559,9 @@ def model_setup(args, data_config):
         model = torch.compile(model)
     if args.load_model_weights:
         if args.load_model_weights == 'finetune_gghww_custom':
-            model_state = torch.load("/fmhwwvol/ak8_MD_vminclv2ParT_manual_fixwrap_all_nodes/net_best_epoch_state.pt", map_location='cpu')
+            # model_state = torch.load("/fmhwwvol/ak8_MD_vminclv2ParT_manual_fixwrap_all_nodes/net_best_epoch_state.pt", map_location='cpu')
+            model_state = torch.load("triton_models/ak8_MD_vminclv2ParT_manual_fixwrap_all_nodes/net_best_epoch_state.pt", map_location='cpu')
+
             state_dict = model.state_dict()
             state_dict['mlp.0.0.weight'].copy_(model_state['part.fc.0.weight'][-1:].data)
             state_dict['mlp.0.0.bias'].copy_(model_state['part.fc.0.bias'][-1:].data)
@@ -728,11 +738,6 @@ def _main(args):
         profile(args, model, model_info, device=dev)
         return
 
-    # export to ONNX
-    if args.export_onnx:
-        onnx(args, model, data_config, model_info)
-        return
-
     if args.tensorboard:
         from utils.nn.tools import TensorboardHelper
         tb = TensorboardHelper(tb_comment=args.tensorboard, tb_custom_fn=args.tensorboard_custom_fn)
@@ -861,6 +866,11 @@ def _main(args):
                 else:
                     save_parquet(args, output_path, scores, labels, observers)
                 _logger.info('Written output to %s' % output_path, color='bold')
+
+    # export to ONNX
+    if args.export_onnx:
+        onnx(args, model, data_config, model_info)
+        return
 
 
 def main():

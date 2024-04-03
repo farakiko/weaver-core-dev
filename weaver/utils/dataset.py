@@ -227,6 +227,7 @@ class _SimpleIter(object):
 
     def _try_get_next(self, init=False):
         end_of_list = self.ipos >= len(self.filelist) if self._fetch_by_files else self.ipos >= self.load_range[1]
+
         if end_of_list:
             if init:
                 raise RuntimeError('Nothing to load for worker %d' %
@@ -240,10 +241,13 @@ class _SimpleIter(object):
                 self.prefetch = None
                 return
 
+
         if self._fetch_by_files:
+
             filelist = self.filelist[int(self.ipos): int(self.ipos + self._fetch_step)]
             load_range = self.load_range
         else:
+
             filelist = self.filelist
             load_range = (self.ipos, min(self.ipos + self._fetch_step, self.load_range[1]))
 
@@ -252,6 +256,7 @@ class _SimpleIter(object):
             self.prefetch = self.executor.submit(_load_next, self._data_config,
                                                  filelist, load_range, self._sampler_options)
         else:
+
             self.prefetch = _load_next(self._data_config, filelist, load_range, self._sampler_options)
         self.ipos += self._fetch_step
 

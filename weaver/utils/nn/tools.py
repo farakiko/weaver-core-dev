@@ -41,7 +41,9 @@ def train_classification(model, loss_func, opt, scheduler, train_loader, dev, ep
     total_correct = 0
     count = 0
     start_time = time.time()
+
     with tqdm.tqdm(train_loader) as tq:
+
         for X, y, _ in tq:
             inputs = [X[k].to(dev) for k in data_config.input_names]
             label = y[data_config.label_names[0]].long()
@@ -101,7 +103,7 @@ def train_classification(model, loss_func, opt, scheduler, train_loader, dev, ep
                         tb_helper.custom_fn(model_output=model_output, model=model, epoch=epoch, i_batch=num_batches, mode='train')
 
             if steps_per_epoch is not None and num_batches >= steps_per_epoch:
-                break
+                break    
 
     time_diff = time.time() - start_time
     _logger.info('Processed %d entries in total (avg. speed %.1f entries/s)' % (count, count / time_diff))
