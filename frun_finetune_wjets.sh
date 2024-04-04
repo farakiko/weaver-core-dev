@@ -564,67 +564,89 @@
 #   --samples-per-epoch 900000 --samples-per-epoch-val 100000 \
 
 
-CONFIG=v35
-PREFIX=${CONFIG}_12_23
-NETWORK="mlp_2p_gated_on_hid_alone"
-python -u weaver/train.py \
- --gpu "" \
- --batch-size 1000 --start-lr 6.75e-4 --num-epochs 15 --optimizer adam \
- --data-train 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/train/*.root' \
- --data-config weaver/data_new/finetune/FM_ak8_WJets_tagger_${CONFIG}.yaml \
- --network-config weaver/networks/fintune_test/${NETWORK}.py \
- --model-prefix experiments_finetuning/${PREFIX}/net/model \
- --log-file experiments_finetuning/${PREFIX}/logs/train.log \
- --num-workers 0 \
- --in-memory \
- --tensorboard _${PREFIX} \
- --data-test 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/test/*.root' \
- --load-model-weights finetune_gghww_custom \
- --export-onnx experiments_finetuning/${PREFIX}/model.onnx \
- --predict-output experiments_finetuning/${PREFIX}/predict/pred.root \
-  --samples-per-epoch 800000 --samples-per-epoch-val 100000 \
+# CONFIG=v35
+# PREFIX=${CONFIG}_12_23
+# NETWORK="mlp_2p_gated_on_hid_alone"
+# python -u weaver/train.py \
+#  --gpu "" \
+#  --batch-size 1000 --start-lr 6.75e-4 --num-epochs 15 --optimizer adam \
+#  --data-train 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/train/*.root' \
+#  --data-config weaver/data_new/finetune/FM_ak8_WJets_tagger_${CONFIG}.yaml \
+#  --network-config weaver/networks/fintune_test/${NETWORK}.py \
+#  --model-prefix experiments_finetuning/${PREFIX}/net/model \
+#  --log-file experiments_finetuning/${PREFIX}/logs/train.log \
+#  --num-workers 0 \
+#  --in-memory \
+#  --tensorboard _${PREFIX} \
+#  --data-test 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/test/*.root' \
+#  --load-model-weights finetune_gghww_custom \
+#  --export-onnx experiments_finetuning/${PREFIX}/model.onnx \
+#  --predict-output experiments_finetuning/${PREFIX}/predict/pred.root \
+#   --samples-per-epoch 800000 --samples-per-epoch-val 100000 \
 
 
 
-CONFIG=v35
-PREFIX=${CONFIG}_12_24
-NETWORK="mlp_2p_gated_on_hid_alone"
-python -u weaver/train.py \
- --gpu "" \
- --batch-size 1000 --start-lr 6.75e-4 --num-epochs 15 --optimizer adam \
- --data-train 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/train/*.root' \
- --data-config weaver/data_new/finetune/FM_ak8_WJets_tagger_${CONFIG}.yaml \
- --network-config weaver/networks/fintune_test/${NETWORK}.py \
- --model-prefix experiments_finetuning/${PREFIX}/net/model \
- --log-file experiments_finetuning/${PREFIX}/logs/train.log \
- --num-workers 0 \
- --in-memory \
- --tensorboard _${PREFIX} \
- --data-test 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/test/*.root' \
- --load-model-weights finetune_gghww_custom \
- --export-onnx experiments_finetuning/${PREFIX}/model.onnx \
- --predict-output experiments_finetuning/${PREFIX}/predict/pred.root \
-  --samples-per-epoch 800000 --samples-per-epoch-val 100000 \
+# CONFIG=v35
+# PREFIX=${CONFIG}_12_24
+# NETWORK="mlp_2p_gated_on_hid_alone"
+# python -u weaver/train.py \
+#  --gpu "" \
+#  --batch-size 1000 --start-lr 6.75e-4 --num-epochs 15 --optimizer adam \
+#  --data-train 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/train/*.root' \
+#  --data-config weaver/data_new/finetune/FM_ak8_WJets_tagger_${CONFIG}.yaml \
+#  --network-config weaver/networks/fintune_test/${NETWORK}.py \
+#  --model-prefix experiments_finetuning/${PREFIX}/net/model \
+#  --log-file experiments_finetuning/${PREFIX}/logs/train.log \
+#  --num-workers 0 \
+#  --in-memory \
+#  --tensorboard _${PREFIX} \
+#  --data-test 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/test/*.root' \
+#  --load-model-weights finetune_gghww_custom \
+#  --export-onnx experiments_finetuning/${PREFIX}/model.onnx \
+#  --predict-output experiments_finetuning/${PREFIX}/predict/pred.root \
+#   --samples-per-epoch 800000 --samples-per-epoch-val 100000 \
 
 
 
-CONFIG=v35
-PREFIX=${CONFIG}_12_25
-NETWORK="mlp_2p_gated_on_hid_alone"
-python -u weaver/train.py \
- --gpu "" \
- --batch-size 1000 --start-lr 6.75e-4 --num-epochs 15 --optimizer adam \
- --data-train 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/train/*.root' \
- --data-config weaver/data_new/finetune/FM_ak8_WJets_tagger_${CONFIG}.yaml \
- --network-config weaver/networks/fintune_test/${NETWORK}.py \
- --model-prefix experiments_finetuning/${PREFIX}/net/model \
- --log-file experiments_finetuning/${PREFIX}/logs/train.log \
- --num-workers 0 \
- --in-memory \
- --tensorboard _${PREFIX} \
- --data-test 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/test/*.root' \
- --load-model-weights finetune_gghww_custom \
- --export-onnx experiments_finetuning/${PREFIX}/model.onnx \
- --predict-output experiments_finetuning/${PREFIX}/predict/pred.root \
-  --samples-per-epoch 800000 --samples-per-epoch-val 100000 \
+# CONFIG=v35
+# PREFIX=${CONFIG}_12_25
+# NETWORK="mlp_2p_gated_on_hid_alone"
+# python -u weaver/train.py \
+#  --gpu "" \
+#  --batch-size 1000 --start-lr 6.75e-4 --num-epochs 15 --optimizer adam \
+#  --data-train 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/train/*.root' \
+#  --data-config weaver/data_new/finetune/FM_ak8_WJets_tagger_${CONFIG}.yaml \
+#  --network-config weaver/networks/fintune_test/${NETWORK}.py \
+#  --model-prefix experiments_finetuning/${PREFIX}/net/model \
+#  --log-file experiments_finetuning/${PREFIX}/logs/train.log \
+#  --num-workers 0 \
+#  --in-memory \
+#  --tensorboard _${PREFIX} \
+#  --data-test 'datafiles/TaggerInput_Small2/TaggerInput*/*/outfiles/test/*.root' \
+#  --load-model-weights finetune_gghww_custom \
+#  --export-onnx experiments_finetuning/${PREFIX}/model.onnx \
+#  --predict-output experiments_finetuning/${PREFIX}/predict/pred.root \
+#   --samples-per-epoch 800000 --samples-per-epoch-val 100000 \
+
+# CONFIG=v35
+# PREFIX=${CONFIG}_17
+# NETWORK="mlp_2p_gated_on_hid_alone"
+
+# python -u weaver/train.py \
+#  --gpu "" \
+#  --batch-size 1000 --start-lr 6.75e-4 --num-epochs 10 --optimizer adam \
+#  --data-train 'datafiles/TaggerInput_Small/TaggerInput*/*/outfiles/train/*.root' \
+#  --data-config weaver/data_new/finetune/FM_ak8_WJets_tagger_${CONFIG}.yaml \
+#  --network-config weaver/networks/fintune_test/${NETWORK}.py \
+#  --model-prefix experiments_finetuning/${PREFIX}/net/model \
+#  --log-file experiments_finetuning/${PREFIX}/logs/train.log \
+#  --num-workers 0 \
+#  --tensorboard _${PREFIX} \
+#  --data-test 'datafiles/TaggerInput_Small/TaggerInput*/*/outfiles/test/*.root' \
+#  --load-model-weights finetune_gghww_custom \
+#  --export-onnx experiments_finetuning/${PREFIX}/model.onnx \
+#  --predict-output experiments_finetuning/${PREFIX}/predict/pred.root \
+# #  --samples-per-epoch 800000 --samples-per-epoch-val 100000 \
+# #  --in-memory \
+
 
